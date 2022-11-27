@@ -9,7 +9,9 @@ name: Create and publish a Docker image
 #     uses: cloud-cli/workflows/.github/workflows/docker-ghcr-build.yml@main
 #     with:
 #       image: 'my-node-app'
-#       baseName: 'node'
+#       baseImage: 'node'
+#
+# Adds the current directory to the base image and publishes it
 
 on:
   workflow_call:
@@ -20,6 +22,11 @@ on:
       baseImage:
         type: string
         required: true
+
+      buildCommand:
+        type: string
+        required: false
+
       defaultBranch:
         required: false
         type: string
@@ -33,9 +40,8 @@ jobs:
       packages: write
 
     env:
-      REGISTRY: ghcr.io
-      TAG: ${{ env.REGISTRY }}/${{ inputs.image }}:${{ github.sha }}
-      LATEST_TAG: ${{ env.REGISTRY }}/${{ inputs.image }}:latest
+      TAG: ghcr.io/${{ inputs.image }}:${{ github.sha }}
+      LATEST_TAG: ghcr.io/${{ inputs.image }}:latest
 
     steps:
       - uses: actions/checkout@v3
@@ -43,13 +49,18 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Dockerfile
         run: |
-          echo 'FROM ${{ env.REGISTRY }}/${{ inputs.baseImage }} \nADD . /home/app'
+          echo 'FROM ghcr.io/cloud-cli/${{ inputs.baseImage }} \nADD . /home/app'
+
+      - name: Build project
+        if: ${{ inputs.buildCommand != '' }}
+        run: |
+          sh ${{ inputs.buildCommand }}
 
       - name: Build branch
         uses: docker/build-push-action@v2
@@ -57,15 +68,3 @@ jobs:
           context: .
           push: true
           tags: ${{ env.TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build latest
-        if: github.ref == 'refs/heads/${{ inputs.defaultBranch }}'
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: ${{ env.LATEST_TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
