@@ -6,6 +6,13 @@ Requires at least a name and a base image name to work correctly.
 
 ## Parameters
 
+| name          | description                                       |
+| ------------- | ------------------------------------------------- |
+| name          | name of the image to build, e.g. org/target-image |
+| baseImage     | base image to use, e.g. org/base-image            |
+| buildCommand  | Optional. Command used to build the project       |
+| defaultBranch | Optional. Name of the default branch, e.g. `main` |
+
 ## Usage
 
 ```yml
@@ -13,10 +20,8 @@ jobs:
   build:
     uses: cloud-cli/workflows/.github/workflows/docker-ghcr-build.yml@main
     with:
-      name: my-node-app
-      baseImage: node
+      name: my-org/my-node-app
+      baseImage: my-org/node
       buildCommand: npm ci && npm run build && npm t
       defaultBranch: main
 ```
-
-Adds the current directory to the base image and publishes it
