@@ -8,8 +8,8 @@ name: Create and publish a Docker image
 #   build:
 #     uses: cloud-cli/workflows/.github/workflows/docker-ghcr-build.yml@main
 #     with:
-#       image: 'my-node-app'
-#       baseImage: 'node'
+#       name: 'my-node-app'
+#       baseImage: 'myorg/node:version-hash'
 #
 # Adds the current directory to the base image and publishes it
 
@@ -17,8 +17,9 @@ on:
   workflow_call:
     inputs:
       name:
-        required: true
         type: string
+        required: true
+
       baseImage:
         type: string
         required: true
@@ -28,8 +29,8 @@ on:
         required: false
 
       defaultBranch:
-        required: false
         type: string
+        required: false
         default: main
 
 jobs:
@@ -55,7 +56,7 @@ jobs:
 
       - name: Create Dockerfile
         run: |
-          echo 'FROM ghcr.io/cloud-cli/${{ inputs.baseImage }} \nADD . /home/app' > Dockerfile
+          echo 'FROM ghcr.io/${{ inputs.baseImage }} \nADD . /home/app' > Dockerfile
           cat Dockerfile
 
       - name: Build project
@@ -63,14 +64,14 @@ jobs:
         run: |
           sh ${{ inputs.buildCommand }}
 
-      - name: Build branch
+      - name: Build SHA tag
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: ${{ env.TAG }}
 
-      - name: Build branch
+      - name: Build latest tag
         if: github.ref_name == ${{ inputs.defaultBranch }}
         uses: docker/build-push-action@v2
         with:
