@@ -76,7 +76,7 @@ jobs:
       - name: Build project
         if: ${{ inputs.buildCommand != '' }}
         run: |
-          sh ${{ inputs.buildCommand }}
+          ${{ inputs.buildCommand }}
 
       - name: Build SHA tag
         if: inputs.withSha != 'false'
