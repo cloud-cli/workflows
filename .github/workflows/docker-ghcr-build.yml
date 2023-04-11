@@ -42,6 +42,11 @@ on:
         type: string
         required: false
         default: false
+      
+      type:
+        type: string
+        required: false
+        default: ''
 
 jobs:
   build-and-publish-docker-image:
@@ -77,6 +82,11 @@ jobs:
         if: ${{ inputs.buildCommand != '' }}
         run: |
           ${{ inputs.buildCommand }}
+      
+      - name: Build Node project
+        if: ${{ inputs.type == 'node' }}
+        run: |
+          docker run --rm -v $PWD:/home -w /home --entrypoint /usr/local/bin/npm node:latest run ci
 
       - name: Build SHA tag
         if: inputs.withSha != 'false'
