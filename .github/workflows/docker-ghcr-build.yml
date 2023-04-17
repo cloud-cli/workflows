@@ -74,8 +74,10 @@ jobs:
 
       - name: Create Dockerfile
         run: |
-          echo 'FROM ghcr.io/${{ inputs.baseImage }}' > Dockerfile
-          echo 'ADD . /home/app' >> Dockerfile
+          if test ! -f "Dockerfile"; then
+            echo 'FROM ghcr.io/${{ inputs.baseImage }}' > Dockerfile
+            echo 'ADD . /home/app' >> Dockerfile
+          fi
           cat Dockerfile
 
       - name: Build project
