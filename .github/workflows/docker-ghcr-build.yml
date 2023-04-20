@@ -98,6 +98,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build latest tag
         if: github.ref_name == ${{ inputs.defaultBranch }} && inputs.withTag != 'false'
@@ -107,3 +109,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.LATEST_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
