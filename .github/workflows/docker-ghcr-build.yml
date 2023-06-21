@@ -95,6 +95,11 @@ jobs:
         run: |
           docker run --rm -v $PWD:/home -u root -w /home --entrypoint /usr/local/bin/npm ghcr.io/cloud-cli/node:latest run ci
 
+      - name: Build Vite project
+        if: ${{ inputs.type == 'vite' }}
+        run: |
+          docker run --rm -v $PWD:/home/app -u root ghcr.io/cloud-cli/vite:latest build
+
       - name: Build SHA tag
         if: inputs.withSha != 'false'
         uses: docker/build-push-action@v2
