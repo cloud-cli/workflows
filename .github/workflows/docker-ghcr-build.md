@@ -23,6 +23,10 @@ Requires at least a name and a base image name to work correctly.
 
 Specify input with `type: node`. Runs a docker container with the latest Node.JS and invokes `npm run ci` on it.
 
+**vite**:
+
+Specify input with `type: vite`. Runs a docker container with the latest Node.JS and Vite to build a Vue.js project.
+
 ## Usage
 
 The following job will build an image and publish as `my-org/my-node-app:latest` and `my-org/my-node-app:{git-sha}`
