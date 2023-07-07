@@ -81,7 +81,7 @@ jobs:
         run: |
           if test ! -f "Dockerfile"; then
             echo 'FROM ghcr.io/${{ inputs.baseImage }}' > Dockerfile
-            echo 'ADD . /home/app' >> Dockerfile
+            echo 'COPY --chown=node:node . /home/app' >> Dockerfile
           fi
           cat Dockerfile
 
@@ -98,7 +98,7 @@ jobs:
       - name: Build Vite project
         if: ${{ inputs.type == 'vite' }}
         run: |
-          docker run --rm -v $PWD:/home/workspace/src -u root ghcr.io/cloud-cli/vite:latest build
+          docker run --rm -v $PWD:/home/workspace/src -u root -e CI=true ghcr.io/cloud-cli/vite:latest build
 
       - name: Build SHA tag
         if: inputs.withSha != 'false'
