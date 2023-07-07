@@ -98,7 +98,7 @@ jobs:
       - name: Build Vite project
         if: ${{ inputs.type == 'vite' }}
         run: |
-          docker run --rm -v $PWD:/home/app -u root ghcr.io/cloud-cli/vite:latest build
+          docker run --rm -v $PWD:/home/workspace/src -u root ghcr.io/cloud-cli/vite:latest build
 
       - name: Build SHA tag
         if: inputs.withSha != 'false'
