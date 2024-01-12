@@ -51,7 +51,7 @@ on:
       arch:
         type: string
         required: false
-        default: linux/arm64
+        default: linux/amd64,linux/arm64
 
 jobs:
   build-and-publish-docker-image:
