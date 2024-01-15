@@ -1,0 +1,73 @@
+name: Build/Release
+
+on:
+  workflow_call:
+    inputs:
+      branches:
+        required: false
+        default: main
+        type: string
+      build:
+        required: false
+        default: true
+        type: boolean
+      path:
+        required: false
+        default: "."
+        type: string
+      registry:
+        required: false
+        default: ""
+        type: string
+      buildCommand:
+        required: false
+        default: "npm i && npm run test && npm run build"
+        type: string
+    secrets:
+      NPM_TOKEN:
+        required: true
+      GH_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: Build/Release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          cache: npm
+          cache-dependency-path: ${{ inputs.path }}/package-lock.json
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+
+      - run: chrome --version
+
+      - name: Install dependencies and build library
+        if: inputs.build
+        run: ${{ inputs.buildCommand }}
+
+      - name: Set publish registry
+        if: inputs.registry
+        run: |
+          echo "registry=${{ inputs.registry }}" >> .npmrc
+          cat .npmrc
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4.0.0
+        with:
+          branches: ${{ inputs.branches }}
+          working_directory: ${{ inputs.path }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
