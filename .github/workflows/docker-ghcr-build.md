@@ -16,7 +16,6 @@ Requires at least a name and a base image name to work correctly.
 | withSha       | Optional. Publishes the image with a tag matching the Git SHA being built. Default is `true` |
 | withTag       | Optional. Publishes the image with a tag `latest` to the registry. Default is `false`        |
 
-
 ## Build types
 
 **node**:
