@@ -29,7 +29,7 @@ All parameters are optional.
 
    jobs:
      release:
-       uses: cloud-cli/workflows/.github/workflows/node-build-release.yml@main
+       uses: cloud-cli/workflows/.github/workflows/npm-build-release.yml@main
        branches: main
        build: true
        path: '.'
